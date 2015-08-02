@@ -4,6 +4,14 @@ import numpy as np
 from scipy import ndimage
 from scipy import misc
 import matplotlib.pyplot as plt
+import math
+
+
+def avg(l):
+	return math.ceil(float(sum(l))/len(l) if len(l) > 0 else float('nan')) 
+
+
+
 
 card = misc.imread('stripe.JPG',flatten=1)
 card = card > card.mean()
@@ -22,21 +30,44 @@ z = 0
 arr2 = []
 
 for e in arr:
-	# If >90% of pixels in column are 'on' likely part of magnetic line
+	# if >90% of pixels in column are 'on' likely part of magnetic line
 	if e > ((height/100)*90):
 		arr2.append(z)
 	z=z+1
 
 old = -1
 
+width = 0
+
+l = []
+
+mx = -1
+mxl = []
+
+for z in arr2:
+		
+	if not old == -1:
+		mxl.append(int(z-old))		
+
+	if z == old+1:
+		width = width + 1	
+	else:
+		if width > 0:
+			l.append(width)			
+		width = 0
+	old = z
+	
+mxl.sort()
+
+# Separation between lines need to classify as 0s
+sepdist = avg(mxl[-int((len(mxl)/100)*10):])
+
+# Width in pixels of magnetic field line
+maxstripewidth = avg(l)
+
 arr3 = []
 arr3b =[]
 
-# Maximum width of 'line' need to find this programmatically instead
-maxstripewidth = 4
-
-# Separation between 'lines' need to classify as 0
-sepdist = 17
 
 for z in arr2:
 	if z>=old+maxstripewidth:
