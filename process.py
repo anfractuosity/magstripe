@@ -22,6 +22,7 @@ z = 0
 arr2 = []
 
 for e in arr:
+	# If >90% of pixels in column are 'on' likely part of magnetic line
 	if e > ((height/100)*90):
 		arr2.append(z)
 	z=z+1
