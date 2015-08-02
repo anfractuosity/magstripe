@@ -75,7 +75,6 @@ bcd = { "10000":"0",
 	"01110":">",
 	"11111":"?"}
 	
-found = False
 
 posi = []
 
@@ -96,7 +95,7 @@ for z in range(0,len(bitstr)):
 
 		posi.append(out)
 
-print (max(posi, key=len))
+print ("Max:",max(posi, key=len))
 
 
 
