@@ -77,6 +77,8 @@ bcd = { "10000":"0",
 	
 found = False
 
+posi = []
+
 for z in range(0,len(bitstr)):
 	if bitstr[z:z+5] == "11111":
 		out = ""
@@ -92,7 +94,9 @@ for z in range(0,len(bitstr)):
 					
 			q = q + 5
 
-		print(out)
+		posi.append(out)
+
+print (max(posi, key=len))
 
 
 
