@@ -20,12 +20,10 @@ for y in range(0,height):
 
 z = 0
 arr2 = []
-arr2b = []
 
 for e in arr:
 	if e > ((height/100)*90):
 		arr2.append(z)
-		arr2b.append(150)
 	z=z+1
 
 old = -1
@@ -33,23 +31,27 @@ old = -1
 arr3 = []
 arr3b =[]
 
+# Maximum width of 'line' need to find this programmatically instead
 maxstripewidth = 4
+
+# Separation between 'lines' need to classify as 0
+sepdist = 17
+
 for z in arr2:
 	if z>=old+maxstripewidth:
 		arr3.append(z)	
-		arr3b.append(150)
+		arr3b.append(height/2)
 	old = z
 
 old = 0
 
 arr4 = []
-maxdist = 16
 
 bitstr = ""
 marker = 0
 for i in range(0,len(arr3)):
 	if i > 0:
-		if arr3[i]-arr3[i-1] > 17:
+		if arr3[i]-arr3[i-1] > sepdist:
 			bitstr = bitstr + "0"
 			marker = 0
 		else:
