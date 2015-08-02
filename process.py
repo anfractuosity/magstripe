@@ -19,6 +19,7 @@ def process(jpg):
 
 	arr = np.zeros((width))
 
+	# Create array to represent possible magnetic field lines
 	for y in range(0,height):
 		for x in range(0,width):
 			if card[y][x]:
@@ -26,7 +27,6 @@ def process(jpg):
 
 	z = 0
 	arr2 = []
-
 	for e in arr:
 		# if >90% of pixels in column are 'on' likely part of magnetic line
 		if e > ((height/100)*90):
@@ -42,11 +42,9 @@ def process(jpg):
 	mx = -1
 	mxl = []
 
-	for z in arr2:
-		
+	for z in arr2:	
 		if not old == -1:
 			mxl.append(int(z-old))		
-
 		if z == old+1:
 			width = width + 1	
 		else:
@@ -68,7 +66,7 @@ def process(jpg):
 
 
 	for z in arr2:
-		if z>=old+maxstripewidth:
+		if z>old+maxstripewidth:
 			arr3.append(z)	
 			arr3b.append(height/2)
 		old = z
@@ -124,7 +122,6 @@ def process(jpg):
 					break
 					
 				q = q + 5
-		
 			posi.append(out)
 
 	print ("Card:",max(posi, key=len))
