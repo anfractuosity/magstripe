@@ -56,7 +56,7 @@ def process(jpg):
 	mxl.sort()
 
 	# Separation between lines need to classify as 0s
-	sepdist = avg(mxl[-int((len(mxl)/100)*10):])
+	sepdist = avg(mxl[-int((len(mxl)/100)*20):])
 
 	# Width in pixels of magnetic field line
 	maxstripewidth = avg(l)
@@ -130,4 +130,4 @@ def process(jpg):
 	plt.imshow(card)
 	plt.show()
 
-process("stripe.JPG")
+process("magstripe.jpg")
