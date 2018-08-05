@@ -1,5 +1,9 @@
 #!/usr/bin/python3
 
+# Optical decoding of track 2 of a credit card
+#
+# https://www.anfractuosity.com/projects/optical-magnetic-stripe-reading/
+
 import argparse
 import numpy as np
 from scipy import ndimage
@@ -135,7 +139,7 @@ def process(jpg):
     plt.show() # show visualisation
 
 parser = argparse.ArgumentParser()
-parser.add_argument("image", help="Filename of track2 of a credit card image")
+parser.add_argument("image", help="Filename of track 2 of a credit card image")
 args = parser.parse_args()
 
 process(args.image)
