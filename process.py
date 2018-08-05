@@ -6,79 +6,75 @@ from scipy import misc
 import matplotlib.pyplot as plt
 import math
 
-
+# Average
 def avg(l):
-    return math.ceil(float(sum(l))/len(l) if len(l) > 0 else float('nan'))
+    return math.ceil(float(sum(l)) / len(l) if len(l) > 0 else float("nan"))
 
 
+# Process credit card image and return numeric data
 def process(jpg):
 
+    # Read image and threshold it
     card = misc.imread(jpg, flatten=1)
     card = card > card.mean()
+
     width = card.shape[1]
     height = card.shape[0]
 
-    arr = np.zeros((width))
+    pixels = np.zeros((width))
 
     # Create array to represent possible magnetic field lines
     for y in range(0, height):
         for x in range(0, width):
             if card[y][x]:
-                arr[x] = arr[x]+1
+                pixels[x] = pixels[x] + 1
+    lines = []
 
-    z = 0
-    arr2 = []
-    for e in arr:
+    # Record the x position of each line
+    for i in range(len(pixels)):
         # if >90% of pixels in column are 'on' likely part of magnetic line
-        if e > ((height/100)*90):
-            arr2.append(z)
-        z = z + 1
+        if pixels[i] > ((height / 100) * 90):
+            lines.append(i)
 
-    old = -1
-
+    lastlinepos = -1
     width = 0
+    sep = []
+    widths = []
 
-    l = []
+    # Create a list of the widths, between lines
+    for linepos in lines:
 
-    mx = -1
-    mxl = []
+        if not lastlinepos == -1:
+            widths.append(int(linepos - lastlinepos))
 
-    for z in arr2:
-        if not old == -1:
-            mxl.append(int(z-old))
-        if z == old+1:
-            width = width + 1
-        else:
-            if width > 0:
-                l.append(width)
-            width = 0
-        old = z
-    mxl.sort()
+        lastlinepos = linepos
+
+    widths = sorted(widths)
 
     # Separation between lines need to classify as 0s
-    sepdist = avg(mxl[-int((len(mxl)/100)*20):])
+    sepdist = avg(widths[-int((len(widths)/100)*20):])
 
     # Width in pixels of magnetic field line
-    maxstripewidth = avg(l)
+    maxstripewidth = avg(widths)
 
-    arr3 = []
-    arr3b = []
+    old = 0 # last line position
+    pos = [] # position of lines
+    yaxis = [] # y axis value for 'dot' for visualisation
 
-    for z in arr2:
-        if z > old+maxstripewidth:
-            arr3.append(z)
-            arr3b.append(height/2)
-        old = z
-
-    old = 0
-
-    arr4 = []
+    # Create list of line positions above a certain width 
+    for lpos in lines:
+        if lpos > old+maxstripewidth:
+            pos.append(lpos)
+            yaxis.append(height/2)
+        old = lpos
 
     bitstr = ""
     marker = 0
-    for i in range(0, len(arr3)):
+   
+    # Generate binary data as a string
+    for i in range(0, len(pos)):
         if i > 0:
-            if arr3[i]-arr3[i-1] > sepdist:
+            if pos[i]-pos[i-1] > sepdist:
                 bitstr = bitstr + "0"
                 marker = 0
             else:
@@ -86,44 +82,50 @@ def process(jpg):
                 if marker == 2:
                     bitstr = bitstr + "1"
                     marker = 0
+   
+    # Mapping of binary data
+    bcd = {
+        "10000": "0",
+        "00001": "1",
+        "00010": "2",
+        "10011": "3",
+        "00100": "4",
+        "10101": "5",
+        "10110": "6",
+        "00111": "7",
+        "01000": "8",
+        "11001": "9",
+        "11010": ":",
+        "01011": ";",
+        "11100": "<",
+        "01101": "=",
+        "01110": ">",
+        "11111": "?",
+    }
 
-    bcd = {"10000": "0",
-           "00001": "1",
-           "00010": "2",
-           "10011": "3",
-           "00100": "4",
-           "10101": "5",
-           "10110": "6",
-           "00111": "7",
-           "01000": "8",
-           "11001": "9",
-           "11010": ":",
-           "01011": ";",
-           "11100": "<",
-           "01101": "=",
-           "01110": ">",
-           "11111": "?"}
+    possible = []   # possible card numbers
+    start = "11111" # card starts with
 
-    posi = []
-    for z in range(0, len(bitstr)):
-        if bitstr[z:z+5] == "11111":
+    for x in range(0, len(bitstr)):
+        if bitstr[x : x + len(start)] == start: # found potential start
             out = ""
-            q = z
+            q = x
             while True:
-                chunk = bitstr[q:q+5]
-                if len(chunk) == 5:
+                chunk = bitstr[q : q + len(start)]
+                if len(chunk) == len(start):
                     if chunk not in bcd:
                         break
                     out = bcd[chunk] + out
                 else:
                     break
-                q = q + 5
-            posi.append(out)
+                q += len(start)
+            possible.append(out)
 
-    print("Card:", max(posi, key=len))
-    plt.scatter(arr3, arr3b)
+    print("Card:", max(possible, key=len)) # print card number with longest length
+
+    plt.scatter(pos, yaxis)
     plt.imshow(card)
-    plt.show()
+    plt.show() # show visualisation
 
 
 process("magstripe.jpg")
