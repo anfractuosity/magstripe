@@ -1,10 +1,13 @@
 #!/usr/bin/python3
 
+import argparse
 import numpy as np
 from scipy import ndimage
 from scipy import misc
 import matplotlib.pyplot as plt
 import math
+import sys
+import os
 
 # Average
 def avg(l):
@@ -13,6 +16,10 @@ def avg(l):
 
 # Process credit card image and return numeric data
 def process(jpg):
+
+    if not os.path.exists(jpg):
+        print("Please provide an image that exists",file=sys.stderr)
+        return
 
     # Read image and threshold it
     card = misc.imread(jpg, flatten=1)
@@ -127,5 +134,8 @@ def process(jpg):
     plt.imshow(card)
     plt.show() # show visualisation
 
+parser = argparse.ArgumentParser()
+parser.add_argument("image", help="Filename of track2 of a credit card image")
+args = parser.parse_args()
 
-process("magstripe.jpg")
+process(args.image)
