@@ -5,13 +5,14 @@
 # https://www.anfractuosity.com/projects/optical-magnetic-stripe-reading/
 
 import argparse
-import numpy as np
-from scipy import ndimage
-from scipy import misc
-import matplotlib.pyplot as plt
 import math
-import sys
 import os
+import sys
+
+import matplotlib.pyplot as plt
+import numpy as np
+from PIL import Image
+
 
 # Average
 def avg(l):
@@ -26,7 +27,7 @@ def process(jpg):
         return
 
     # Read image and threshold it
-    card = misc.imread(jpg, flatten=1)
+    card = np.array(Image.open(jpg).convert('L'))
     card = card > card.mean()
 
     width = card.shape[1]

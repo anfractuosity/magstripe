@@ -11,8 +11,14 @@ Run with:
 
 ## Requirements 
 
+* Pillow
 * numpy
-* scipy
 * matplotlib
+
+```
+pip install Pillow
+pip install numpy
+pip install matplotlib
+```
 
 Please see https://www.anfractuosity.com/projects/optical-magnetic-stripe-reading/ for more information.
